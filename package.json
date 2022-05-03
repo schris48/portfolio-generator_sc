@@ -1,0 +1,22 @@
+{
+  "name": "portfolio-generator_sc",
+  "version": "1.0.0",
+  "description": "Generate a portfolio!",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/schris48/portfolio-generator_sc.git"
+  },
+  "author": "schris48",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/schris48/portfolio-generator_sc/issues"
+  },
+  "homepage": "https://github.com/schris48/portfolio-generator_sc#readme",
+  "dependencies": {
+    "inquirer": "^8.2.4"
+  }
+}
