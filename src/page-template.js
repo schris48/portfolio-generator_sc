@@ -99,6 +99,8 @@ module.exports = templateData => {
   `;
 };
 
+module.exports = { writeFile, copyFile };
+
 
 //   // get array of just featured projects
 //   const featuredProjects = projectsArr.filter(project => {

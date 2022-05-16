@@ -1,4 +1,4 @@
-const fs = require('fs');
+const { writeFile, copyFile } = require('./utils/generate-site.js');
 const generatePage = require('./src/page-template.js');
 const inquirer = require('inquirer');
 
@@ -51,12 +51,19 @@ const promptUser = () => {
 };
 
 const promptProject = portfolioData => {
-  // If there's no 'projcts' array property, create one
-  if (!portfolioData.projects) {
-    portfolioData.projects = [];
-  }
-    return inquirer.prompt([
-      {
+  console.log(`
+  =================
+  Add a new project
+  =================
+  `);
+
+    // If there's no 'projcts' array property, create one
+    if (!portfolioData.projects) {
+      portfolioData.projects = [];
+    }
+    return inquirer
+      .prompt([
+        {
         type: 'input',
         name: 'name',
         message: 'What is the name of your project? (Required)',
@@ -65,51 +72,53 @@ const promptProject = portfolioData => {
             return true;
           } else {
             console.log('Please enter a project name!')
-          }
+            return false;
         }
-      },
-      {
-        type: 'input',
-        name: 'description',
-        message: 'Provide a description of the project (Required)',
-        validate: projectDescriptionInput => {
-          if (projectDescriptionInput) {
-            return true;
-          } else {
-            console.log('Please enter a project description!')
-          }
-        }
-      },
-      {
-        type: 'checkbox',
-        name: 'languages',
-        message: 'What did you build this project with? (Check all that apply)',
-        choices: ['JavaScript', 'HTML', 'CSS', 'ES6', 'jQuery', 'Bootstrap', 'Node']
-      },
-      {
-        type: 'input',
-        name: 'link',
-        message: 'Enter the Github link to your project (Required)',
-        validate: githubLink => {
-          if (githubLink) {
-            return true;
-          } else {
-            console.log('Please enter the link to your github project!')
-          }
-        }
-      },
-      {
-        type: 'confirm',
-        name: 'feature',
-        message: 'Would you like to feature this project?',
-        default: false
-      },
-      {
-        type: 'confirm',
-        name: 'confirmAddProject',
-        message: 'Would you like to enter another project?',
-        default: false
       }
+    },
+    {
+      type: 'input',
+      name: 'description',
+      message: 'Provide a description of the project (Required)',
+      validate: projectDescriptionInput => {
+        if (projectDescriptionInput) {
+          return true;
+        } else {
+          console.log('Please enter a project description!')
+          return false;
+        }
+      }
+    },
+    {
+      type: 'checkbox',
+      name: 'languages',
+      message: 'What did you build this project with? (Check all that apply)',
+      choices: ['JavaScript', 'HTML', 'CSS', 'ES6', 'jQuery', 'Bootstrap', 'Node']
+    },
+    {
+      type: 'input',
+      name: 'link',
+      message: 'Enter the Github link to your project (Required)',
+      validate: githubLink => {
+        if (githubLink) {
+          return true;
+        } else {
+          console.log('Please enter the link to your github project!')
+        }
+      }
+    },
+    {
+      type: 'confirm',
+      name: 'feature',
+      message: 'Would you like to feature this project?',
+      default: false
+    },
+    {
+      type: 'confirm',
+      name: 'confirmAddProject',
+      message: 'Would you like to enter another project?',
+      default: false
+    }
     ])
     .then(projectData => {
         portfolioData.projects.push(projectData);
@@ -124,23 +133,38 @@ const promptProject = portfolioData => {
 promptUser()
   .then(promptProject)
   .then(portfolioData => {
+    return generatePage(portfolioData);
+  })
+  .then(pageHTML => {
+    return writeFile(pageHTML);
+  })
+  .then(writeFileResponse => {
+    console.log(writeFileResponse);
+    return copyFile();
+  })
+  .then(copyFileResponse => {
+    console.log(copyFileResponse);
+  })
+  .catch(err => {
+    console.log(err);
+  });
 
-    const pageHTML = generatePage(portfolioData);
+    // const pageHTML = generatePage(portfolioData);
 
-    fs.writeFile('./dist/index.html', pageHTML, err => {
-      if (err) {
-        console.log(err);
-        return;
-      }
+    // fs.writeFile('./dist/index.html', pageHTML, err => {
+    //   if (err) {
+    //     console.log(err);
+    //     return;
+    //   }
 
-      console.log('Page created! Check out index.html in the dist directory to see it!');
+    //   console.log('Page created! Check out index.html in the dist directory to see it!');
 
-      fs.copyFile('./src/style.css', './dist/style.css', err => {
-        if (err) {
-          console.log(err);
-          return;
-        }
-        console.log('Style sheet copied successfully!');
-      });
-    });  
-});
+    //   fs.copyFile('./src/style.css', './dist/style.css', err => {
+    //     if (err) {
+    //       console.log(err);
+    //       return;
+    //     }
+    //     console.log('Style sheet copied successfully!');
+    //   });
+    // });  
+// });
